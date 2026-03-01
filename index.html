@@ -50,6 +50,11 @@
       --radius-md: 12px;
       --radius-lg: 16px;
       --radius-full: 9999px;
+
+      /* レイアウト (デジタル庁: 768px breakpoint, 12col grid) */
+      --content-max: 960px;
+      --gutter: 16px;
+      --margin: 16px;
     }
 
     body {
@@ -209,8 +214,13 @@
       top: 0;
       z-index: 10;
       background: var(--bg);
-      padding: var(--sp-2) var(--sp-2) 0;
       border-bottom: 1px solid var(--border);
+    }
+
+    .app-header-inner {
+      max-width: calc(var(--content-max) + var(--margin) * 2);
+      margin: 0 auto;
+      padding: var(--sp-2) var(--margin) 0;
     }
 
     .app-header-row {
@@ -283,7 +293,11 @@
     }
 
     /* ── Content ── */
-    .tab-content { padding: var(--sp-2); }
+    .tab-content {
+      padding: var(--sp-2) var(--margin);
+      max-width: calc(var(--content-max) + var(--margin) * 2);
+      margin: 0 auto;
+    }
     .tab-panel { display: none; }
     .tab-panel.active { display: block; animation: fadeIn 0.2s ease; }
 
@@ -294,10 +308,10 @@
 
     /* ── Summary Section ── */
     .summary {
-      display: flex;
-      gap: var(--sp-2);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--gutter);
       margin-bottom: var(--sp-2);
-      flex-wrap: wrap;
     }
 
     .donut-card {
@@ -305,8 +319,6 @@
       border: 1px solid var(--border);
       border-radius: var(--radius-md);
       padding: var(--sp-2);
-      flex: 1;
-      min-width: 150px;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -334,9 +346,9 @@
     }
 
     .key-numbers {
-      display: flex;
-      gap: var(--sp-1);
-      flex-wrap: wrap;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--gutter);
     }
 
     .key-num {
@@ -345,8 +357,6 @@
       border-radius: var(--radius-md);
       padding: var(--sp-2);
       text-align: center;
-      flex: 1;
-      min-width: 80px;
     }
 
     .key-num .val {
@@ -472,13 +482,6 @@
       gap: 3px;
     }
 
-    @media (min-width: 640px) {
-      .tile-grid {
-        grid-template-columns: repeat(auto-fill, minmax(24px, 1fr));
-        gap: 2px;
-      }
-    }
-
     .tile {
       aspect-ratio: 1;
       border-radius: 2px;
@@ -590,6 +593,26 @@
       align-items: center;
     }
 
+    .list-controls .search-input {
+      flex: 1;
+      min-width: 120px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      padding: 10px 12px;
+      font-size: 0.85rem;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .list-controls .search-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px var(--accent-bg);
+    }
+
+    .list-controls .search-input::placeholder { color: var(--text-dim); }
+
     .filter-row {
       display: flex;
       gap: 6px;
@@ -692,7 +715,7 @@
     }
 
     .song-table .title-cell {
-      max-width: 200px;
+      max-width: 120px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -770,16 +793,82 @@
 
     .export-banner .btn { font-size: 0.75rem; padding: 6px 16px; min-height: 36px; }
 
-    /* ── Responsive ── */
-    @media (min-width: 640px) {
-      .summary { flex-wrap: nowrap; }
-      .donut-svg { width: 140px; height: 140px; }
-      .tile-grid { grid-template-columns: repeat(auto-fill, minmax(20px, 1fr)); }
+    /* ── Responsive: デジタル庁 768px breakpoint ── */
+
+    /* モバイル (<768px) */
+    @media (max-width: 767px) {
+      :root {
+        --margin: 16px;
+        --gutter: 12px;
+      }
+
+      .app-header h1 { font-size: 1rem; }
+
+      .summary {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .donut-svg { width: 100px; height: 100px; }
+
+      .donut-center-text { font-size: 1.2rem; }
+
+      .key-num .val { font-size: 1.1rem; }
+      .key-num { padding: var(--sp-1) var(--sp-2); }
+
+      .grid-controls {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .grid-controls .search-input { min-width: 100%; }
+
+      .sort-select { width: 100%; }
+
+      .song-table { font-size: 0.8rem; }
+      .song-table th, .song-table td { padding: 8px 4px; }
+      .song-table .title-cell { max-width: 120px; }
+
+      /* スコア列をモバイルで非表示 */
+      .song-table th:nth-child(5),
+      .song-table td:nth-child(5) { display: none; }
+
+      .list-controls .search-input { width: 100%; }
+
+      .export-banner { margin: var(--sp-1) var(--margin) 0; }
     }
 
-    @media (min-width: 1024px) {
-      .tab-content { max-width: 960px; margin: 0 auto; padding: var(--sp-3); }
-      .tile-grid { grid-template-columns: repeat(auto-fill, minmax(18px, 1fr)); }
+    /* デスクトップ (>=768px) */
+    @media (min-width: 768px) {
+      :root {
+        --margin: 32px;
+        --gutter: 24px;
+      }
+
+      .summary {
+        grid-template-columns: 1fr 1fr;
+        gap: var(--gutter);
+      }
+
+      .donut-svg { width: 150px; height: 150px; }
+
+      .donut-center-text { font-size: 1.6rem; }
+
+      .key-num .val { font-size: 1.6rem; }
+
+      .tile-grid {
+        grid-template-columns: repeat(auto-fill, minmax(18px, 1fr));
+        gap: 2px;
+      }
+
+      .song-table .title-cell { max-width: 320px; }
+
+      .grid-section-header h3 { font-size: 1rem; }
+
+      .export-banner {
+        max-width: calc(var(--content-max) + var(--margin) * 2);
+        margin: var(--sp-2) auto 0;
+        padding: var(--sp-2) var(--margin);
+      }
     }
   </style>
 </head>
@@ -814,16 +903,18 @@
 <!-- Main App -->
 <div id="app">
   <div class="app-header">
-    <div class="app-header-row">
-      <h1>IIDX Lamp Viewer</h1>
-      <div class="header-actions">
-        <button id="btn-share">Share</button>
-        <button id="btn-manage" style="display:none">CSV更新</button>
+    <div class="app-header-inner">
+      <div class="app-header-row">
+        <h1>IIDX Lamp Viewer</h1>
+        <div class="header-actions">
+          <button id="btn-share">Share</button>
+          <button id="btn-manage" style="display:none">CSV更新</button>
+        </div>
       </div>
-    </div>
-    <div class="tab-nav">
-      <button class="tab-nav-btn" data-tab="grid">Grid</button>
-      <button class="tab-nav-btn active" data-tab="list">List</button>
+      <div class="tab-nav">
+        <button class="tab-nav-btn" data-tab="grid">Grid</button>
+        <button class="tab-nav-btn active" data-tab="list">List</button>
+      </div>
     </div>
   </div>
   <input type="file" id="file-input-update" accept=".csv" style="display:none">
@@ -854,7 +945,7 @@
     <!-- List Tab -->
     <div class="tab-panel active" id="panel-list">
       <div class="list-controls">
-        <input class="search-input" id="list-search" type="text" placeholder="曲名・アーティスト検索..." style="flex:1;min-width:120px">
+        <input class="search-input" id="list-search" type="text" placeholder="曲名・アーティスト検索...">
       </div>
       <div class="filter-row" id="level-filters"></div>
       <div class="filter-row" id="lamp-filters"></div>
